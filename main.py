@@ -31,6 +31,9 @@ def main():
     url = st.text_input("Insert The website URL")
     prompt = st.text_input("Ask a question (query/prompt)")
     if st.button("Submit Query", type="primary"):
+      openai.api_key = key  # Replace with your actual API key
+      os.environ['OPENAI_API_KEY']=key
+
         ABS_PATH: str = os.path.dirname(os.path.abspath(__file__))
         DB_DIR: str = os.path.join(ABS_PATH, "db")
 
