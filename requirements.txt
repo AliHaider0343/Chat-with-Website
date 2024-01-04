@@ -1,4 +1,4 @@
 langchain
 openai
 beautifulsoup4
-chromadb==0.4.21
+chromadb==0.3.29
