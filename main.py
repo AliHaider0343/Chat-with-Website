@@ -10,9 +10,7 @@ from langchain.prompts.chat import (ChatPromptTemplate,
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import Chroma
 import openai
-openai.api_key = "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"  # Replace with your actual API key
-os.environ['OPENAI_API_KEY']='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'
-
+ 
 
 system_template = """Use the following pieces of context to answer the users question.
 If you don't know the answer, just say that you don't know, don't try to make up an answer.
@@ -29,9 +27,8 @@ def main():
     # Set the title and subtitle of the app
     st.title('🦜🔗 Chat With Website')
     st.subheader('Input your website URL, ask questions, and receive answers directly from the website.')
-
+    key= st.text_input("Insert Your Open AI API Key")
     url = st.text_input("Insert The website URL")
-
     prompt = st.text_input("Ask a question (query/prompt)")
     if st.button("Submit Query", type="primary"):
         ABS_PATH: str = os.path.dirname(os.path.abspath(__file__))
@@ -49,7 +46,7 @@ def main():
         docs = text_splitter.split_documents(data)
 
         # Create OpenAI embeddings
-        openai_embeddings = OpenAIEmbeddings(openai_api_key="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")
+        openai_embeddings = OpenAIEmbeddings(openai_api_key=key)
 
         # Create a Chroma vector database from the documents
         vectordb = Chroma.from_documents(documents=docs,
