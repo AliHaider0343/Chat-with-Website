@@ -25,51 +25,51 @@ chain_type_kwargs = {"prompt": prompt}
 
 def main():
     # Set the title and subtitle of the app
-    st.title('🦜🔗 Chat With Website')
-    st.subheader('Input your website URL, ask questions, and receive answers directly from the website.')
-    key= st.text_input("Insert Your Open AI API Key")
-    url = st.text_input("Insert The website URL")
-    prompt = st.text_input("Ask a question (query/prompt)")
-    if st.button("Submit Query", type="primary"):
-      openai.api_key = key  # Replace with your actual API key
-      os.environ['OPENAI_API_KEY']=key
+  st.title('🦜🔗 Chat With Website')
+  st.subheader('Input your website URL, ask questions, and receive answers directly from the website.')
+  key= st.text_input("Insert Your Open AI API Key")
+  url = st.text_input("Insert The website URL")
+  prompt = st.text_input("Ask a question (query/prompt)")
+  if st.button("Submit Query", type="primary"):
+    openai.api_key = key  # Replace with your actual API key
+    os.environ['OPENAI_API_KEY']=key
 
-        ABS_PATH: str = os.path.dirname(os.path.abspath(__file__))
-        DB_DIR: str = os.path.join(ABS_PATH, "db")
+    ABS_PATH: str = os.path.dirname(os.path.abspath(__file__))
+    DB_DIR: str = os.path.join(ABS_PATH, "db")
 
         # Load data from the specified URL
-        loader = WebBaseLoader(url)
-        data = loader.load()
-        print("\n\n",str(data))
+    loader = WebBaseLoader(url)
+    data = loader.load()
+    print("\n\n",str(data))
         # Split the loaded data
-        text_splitter = CharacterTextSplitter(separator='\n',
+    text_splitter = CharacterTextSplitter(separator='\n',
                                               chunk_size=100,
                                               chunk_overlap=40)
 
-        docs = text_splitter.split_documents(data)
+    docs = text_splitter.split_documents(data)
 
         # Create OpenAI embeddings
-        openai_embeddings = OpenAIEmbeddings(openai_api_key=key)
+    openai_embeddings = OpenAIEmbeddings(openai_api_key=key)
 
         # Create a Chroma vector database from the documents
-        vectordb = Chroma.from_documents(documents=docs,
+    vectordb = Chroma.from_documents(documents=docs,
                                          embedding=openai_embeddings,
                                          persist_directory=DB_DIR)
 
-        vectordb.persist()
+    vectordb.persist()
 
         # Create a retriever from the Chroma vector database
-        retriever = vectordb.as_retriever(search_kwargs={"k": 3})
+    retriever = vectordb.as_retriever(search_kwargs={"k": 3})
 
         # Use a ChatOpenAI model
-        llm = ChatOpenAI(model_name='gpt-3.5-turbo')
+    llm = ChatOpenAI(model_name='gpt-3.5-turbo')
 
         # Create a RetrievalQA from the model and retriever
-        qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever)
+    qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever)
 
         # Run the prompt and return the response
-        response = qa(prompt)
-        st.write(response)
+    response = qa(prompt)
+    st.write(response)
 
 if __name__ == '__main__':
     main()
